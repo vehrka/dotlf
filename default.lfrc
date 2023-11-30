@@ -8,6 +8,9 @@ set previewer ~/.config/lf/previewer.sh
 set cleaner ~/.config/lf/cleaner.sh
 set autoquit true
 
+cmd aj %lf -remote "send $id cd '$(autojump $1 | sed 's/\\/\\\\/g;s/"/\\"/g')'"
+
+
 # cmds/functions
 cmd open ${{
     case $(file --mime-type "$(readlink -f $f)" -b) in
@@ -51,6 +54,23 @@ cmd extract ${{
     esac
 }}
 
+cmd fzf_jump ${{
+    res="$(find . -maxdepth 1 | fzf --reverse --header='Jump to location')"
+    if [ -n "$res" ]; then
+        if [ -d "$res" ]; then
+            cmd="cd"
+        else
+            cmd="select"
+        fi
+        res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+        lf -remote "send $id $cmd \"$res\""
+    fi
+}}
+
+cmd on-select &{{
+    lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
+}}
+
 # compress current file or selected files with tar and gunzip
 cmd tar ${{
     set -f
@@ -69,12 +89,19 @@ cmd zip ${{
     rm -rf $1
 }}
 
+map ` !true
+map <enter> shell
+map <f-7> mkdir
+map A :rename; cmd-end # at the very end
+map c push A<c-u> # new rename
+map I :rename; cmd-home # at the very beginning
+map a push :aj<space>
 map D trash
 map E extract
-map <enter> shell
-map ` !true
-map x $$f
-map X !$f
+map f $nvim $(fzf)
+map <c-f> :fzf_jump
 map o &mimeopen $f
 map O $mimeopen --ask $f
 map p : paste; clear
+map x $$f
+map X !$f
