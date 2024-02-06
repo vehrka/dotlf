@@ -7,6 +7,12 @@ set period 1
 set previewer ~/.config/lf/previewer.sh
 set cleaner ~/.config/lf/cleaner.sh
 set autoquit true
+set icons true
+set hidden true
+set color256 true
+set drawbox true
+set ignorecase true
+set info size:time
 
 cmd aj %lf -remote "send $id cd '$(autojump $1 | sed 's/\\/\\\\/g;s/"/\\"/g')'"
 
@@ -35,6 +41,7 @@ cmd open ${{
     esac
 }}
 
+%pamac install trash-cli
 %mkdir -p ~/.trash
 cmd trash %trash-put $fx
 
