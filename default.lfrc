@@ -106,7 +106,7 @@ map a push :aj<space>
 map D trash
 map E extract
 map f $nvim $(fzf)
-map <c-f> :fzf_jump
+map / :fzf_jump
 map o &mimeopen $f
 map O $mimeopen --ask $f
 map p : paste; clear
